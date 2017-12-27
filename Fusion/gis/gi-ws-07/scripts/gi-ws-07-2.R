@@ -43,9 +43,9 @@ require(mapview)
 #--> NOTE point to whereever you want but avoid strange letters as dots etc
 #--> the ~ is a substitute for the system variable HOME
 #--> projDir is general project folder  basic folder eg. C:/Dokumente/1_semester_MSCGEO/GIS/
-projDir<-"~/lehre/msc/active/msc-2017/"
+projDir<-"C:/Users/Jannis/Projekte/"
 #-->  rootFolder of the github repository 
-rootDir<-"msc-phygeo-class-of-2017-creuden"
+rootDir<-"caldern/"
 
 
 #--> current class
@@ -54,7 +54,7 @@ courseCode<-"gi"
 activeSessionFolder<-7
 
 #--> create plots
-plotIt <- FALSE
+plotIt <- TRUE
 
 #--> create full rootDir
 rootDir<-paste0(projDir,rootDir)
@@ -90,7 +90,7 @@ zrange<- makenames(zrList)[[2]]
 zrnames<- makenames(zrList)[[1]]
 
 # target grid size
-gridsize <- 10
+gridsize <- 20
 
 # for assignment of projection
 proj4 = "+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
@@ -104,6 +104,10 @@ proj4 = "+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_def
 #densityMetrics2asci,readAscGridMetrics. They are all in the fusionTools script.
 #      they return path-lists to raster files with the necessary data for FHD index calculation  
 #      you may change manually the paramList, only the target gridsize is automatically implemented
+
+# Most Fusion tools require a DEM and extent Info. 
+
+GroundSurfaceCreate(lasFiles = lasfiles,res=gridsize)
 
 # call fusion based slicing funktion
 density<-fu_sliceRas(lasFiles = lasfiles,
@@ -125,12 +129,13 @@ fhd<-list()
 vdr<-list()
 for (i in 1:length(gridMet)){
   cat(i)
-  #--> FHD using the fun_fhd function  provided in diversityindeces.R
+  #--> FHD using the fun_fhd function  provided in diversityIdx.R
   fhd[[i]]<- fun_fhd(unlist(density[[i]]))
   g<-gridMet[[i]] 
+  g[g[]<0]<-NA
   g[is.na(g[])] <- 0 
   g[is.infinite(g[])] <- 0 
-  #--> FHD using the fun_fhd function  provided in diversityindeces.R
+  #--> VDR using the fun_fhd function  provided in diversityIdx.R
   vdr[[i]]<-fun_vdr(g[[1]],g[[2]])
   if (plotIt){
     plot(fhd[[i]],  col=rev(heat.colors(10)),main="FHD Index")
