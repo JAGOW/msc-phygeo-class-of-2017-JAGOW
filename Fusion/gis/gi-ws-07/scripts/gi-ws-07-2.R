@@ -151,6 +151,10 @@ for (i in 1:length(gridMet)){
   
 }
 
+VDR<-do.call(merge,vdr)
+
+FHD<-do.call(merge, fhd)
+
 
 # create names according to inputdata and methods/ranges
 #mn<-paste( unlist(statList), collapse='_')
